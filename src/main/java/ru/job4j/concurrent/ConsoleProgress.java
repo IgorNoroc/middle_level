@@ -17,7 +17,7 @@ public class ConsoleProgress implements Runnable {
             try {
                 Thread.sleep(500);
             } catch (Exception e) {
-                e.printStackTrace();
+               Thread.currentThread().interrupt();
             }
             count++;
         }
@@ -26,7 +26,7 @@ public class ConsoleProgress implements Runnable {
     public static void main(String[] args) throws InterruptedException {
         Thread thread = new Thread(new ConsoleProgress());
         thread.start();
-        Thread.sleep(1000);
+        Thread.sleep(10000);
         thread.interrupt();
     }
 }
