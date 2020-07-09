@@ -8,7 +8,9 @@ public class DCLSingleton {
 
     public static DCLSingleton instOf() {
         if (inst == null) {
-            inst = new DCLSingleton();
+            synchronized (DCLSingleton.class) {
+                inst = new DCLSingleton();
+            }
         }
         return inst;
     }
