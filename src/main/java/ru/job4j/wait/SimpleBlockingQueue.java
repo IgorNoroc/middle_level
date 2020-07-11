@@ -20,23 +20,23 @@ public class SimpleBlockingQueue<T> {
             try {
                 wait();
             } catch (Exception e) {
-                e.printStackTrace();
+                Thread.currentThread().interrupt();
             }
         }
-        queue.add(value);
+        queue.offer(value);
         notify();
     }
 
-    public synchronized T poll() {
-        while (queue.isEmpty()) {
-            try {
-                wait();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    public synchronized T poll() throws InterruptedException {
+        while (isEmpty()) {
+            wait();
         }
         T t = queue.poll();
         notify();
         return t;
+    }
+
+    public synchronized boolean isEmpty() {
+        return queue.isEmpty();
     }
 }

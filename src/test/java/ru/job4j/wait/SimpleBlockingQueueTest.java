@@ -15,7 +15,13 @@ public class SimpleBlockingQueueTest {
         );
         final Integer[] rsl = {null};
         Thread consumer = new Thread(
-                () -> rsl[0] = queue.poll()
+                () -> {
+                    try {
+                        rsl[0] = queue.poll();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
         );
         consumer.start();
         producer.start();
