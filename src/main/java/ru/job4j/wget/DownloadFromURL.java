@@ -15,7 +15,7 @@ public class DownloadFromURL {
      * @param speed speed limit.
      * @param out   destination file.
      */
-    public static void downloadFile(String url, String speed, OutputStream out) {
+    public void downloadFile(String url, String speed, OutputStream out) {
         try (BufferedInputStream reader = new BufferedInputStream(new URL(url).openStream())) {
             byte[] buffer = new byte[Integer.parseInt(speed) * 1000];
             int i = 0;
@@ -37,7 +37,7 @@ public class DownloadFromURL {
      *
      * @param time time.
      */
-    private static void speedLimit(long time) {
+    private void speedLimit(long time) {
         if (time < 1000) {
             try {
                 Thread.sleep(1000 - time);
