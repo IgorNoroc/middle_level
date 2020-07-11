@@ -1,12 +1,15 @@
 package ru.job4j.wait;
 
+import net.jcip.annotations.GuardedBy;
+
 /**
  * 0. Управление нитью через wait. [#318307]
  */
 public class CountBarrier {
     private final Object monitor = this;
     private final int total;
-    private int count = 0;
+    @GuardedBy("this")
+    private volatile int count = 0;
 
     public CountBarrier(final int total) {
         this.total = total;
