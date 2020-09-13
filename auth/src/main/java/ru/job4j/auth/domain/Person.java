@@ -1,7 +1,5 @@
 package ru.job4j.auth.domain;
 
-import org.springframework.stereotype.Component;
-
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -13,6 +11,8 @@ public class Person {
     private int id;
     private String login;
     private String password;
+
+
 
     public Person() {
     }
@@ -52,5 +52,14 @@ public class Person {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Person{" +
+                "id=" + id +
+                ", login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

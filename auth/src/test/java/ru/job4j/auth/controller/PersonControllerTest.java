@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import ru.job4j.auth.AuthApplication;
 import ru.job4j.auth.domain.Person;
 import ru.job4j.auth.repository.PersonRepository;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -41,13 +43,18 @@ class PersonControllerTest {
 
     @Test
     public void shouldReturnAllPersonsAndStatusOk() throws Exception {
+        Person person = new Person();
+        person.setId(1);
+        person.setLogin("test");
+        person.setPassword("t");
+        when(repository.findAll()).thenReturn(List.of(person));
         mockMvc.perform(get("/person/"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+        .andExpect(content().string("[{\"id\":1,\"login\":\"test\",\"password\":\"t\"}]"));
         verify(repository).findAll();
         PersonController controller = new PersonController(repository);
-        when(repository.findAll()).thenReturn(List.of(new Person()));
-        assertThat(controller.findAll(), is(List.of(new Person())));
+        assertThat(controller.findAll(), is(List.of(person)));
     }
 
     @Test
@@ -59,7 +66,8 @@ class PersonControllerTest {
         when(repository.findById(1)).thenReturn(Optional.of(person));
         mockMvc.perform(get("/person/{id}", "1"))
                 .andDo(print())
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+        .andExpect(content().string("{\"id\":1,\"login\":\"igor\",\"password\":\"123\"}"));
         verify(repository).findById(1);
         PersonController controller = new PersonController(repository);
         assertThat(controller.findById(1), is(new ResponseEntity<>(person, HttpStatus.OK)));
@@ -68,15 +76,17 @@ class PersonControllerTest {
     @Test
     public void shouldCreatePersonAndReturnStatusCreated() throws Exception {
         Person person = new Person();
+        person.setId(67);
         person.setLogin("igor");
         person.setPassword("123");
+        when(repository.save(person)).thenReturn(person);
         mockMvc.perform(post("/person/")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(new Gson().toJson(person)))
                 .andDo(print())
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+        .andExpect(content().string("{\"id\":67,\"login\":\"igor\",\"password\":\"123\"}"));
         verify(repository).save(person);
-        when(repository.save(person)).thenReturn(person);
         PersonController controller = new PersonController(repository);
         assertThat(controller.create(person), is(new ResponseEntity<>(person, HttpStatus.CREATED)));
     }
